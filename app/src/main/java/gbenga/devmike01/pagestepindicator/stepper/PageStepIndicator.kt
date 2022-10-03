@@ -19,35 +19,40 @@ import android.graphics.Color as Color2
 
 @Composable
 fun PageStepIndicator(labels: List<String> = emptyList(), inActiveColor: Int = Color2.GRAY,
-                      activeColor: Int = Color2.BLUE,
-                      borderColor: Int = Color2.RED,
+                      strokeWidth: Float =10F,
+                      textPaintColor: Int =android.graphics.Color.BLACK,
+                      stepPaintColor: Color= Color.Green,
                       onChanged: ((position: Int) -> Unit)? = null) {
 
-    PaintStepIndicators()
+    PaintStepIndicators(textPaintColor = textPaintColor,
+        stepPaintColor = stepPaintColor,
+        strokeWidth = strokeWidth)
 
 }
 
 @Composable
-fun PaintStepIndicators(  strokeWidth: Float =10F,){
+private fun PaintStepIndicators(  strokeWidth: Float =10F,
+                          textPaintColor: Int ,
+                          stepPaintColor: Color){
 
     val textPaint = Paint().asFrameworkPaint().apply {
         isAntiAlias = true
         textSize = 29F
-        color = android.graphics.Color.BLACK
+        color = textPaintColor
         typeface = Typeface.create(Typeface.MONOSPACE, Typeface.BOLD)
     }
 
     val stepPaint = Paint().apply {
         isAntiAlias = true
         this.strokeWidth = strokeWidth
-        color = Color.Green
+        color = stepPaintColor
         style = PaintingStyle.Stroke }
 
     DrawPageStepIndicator(textPaint = textPaint, stepPaint= stepPaint)
 }
 
 @Composable
-fun DrawPageStepIndicator(
+private fun DrawPageStepIndicator(
     textPaint: android.graphics.Paint,
     stepPaint: Paint,
     circleRadius: Float = 50f,
@@ -66,19 +71,25 @@ fun DrawPageStepIndicator(
 
         val lineWidth = stepDistance -  circleRadius
 
-        val circleWidth = circleRadius*2
-
         val labelTopSpace = 50f
 
 
         drawIntoCanvas {
             labels.forEachIndexed{ i, label ->
 
-                val circleOffset =  Offset(x = stepDistance +(lineWidth* i), y = (canvasHeight /2))
-                Log.d("PageStepIndicator", "$label")
+                val bounds = Rect()
+                textPaint.getTextBounds(label, 0, label.length, bounds)
+                val centerX = bounds.centerX()
+
+
+                val circleOffset =  Offset(x = stepDistance +(if(i == 0){
+                    i.toFloat()
+                }else{
+                    (lineWidth* i)
+                }), y = (canvasHeight /2))
+                Log.d("PageStepIndicator", "${circleOffset.x} --> ${canvasWidth -circleOffset.x}")
                 val circleBorderX = strokeWidth + circleRadius
                 it.drawCircle(
-                    //style = Fill(),
                     center = circleOffset,
                     radius = circleRadius,
                     stepPaint
@@ -87,7 +98,6 @@ fun DrawPageStepIndicator(
                 if(i < stepCount){
                     drawLine(
                         strokeWidth = pathHeight,
-                        //strokeWidth = 6f,
                         color = listOf<Color>(Color.Blue, Color.Red, Color.Black, Color.DarkGray,)[i], //pathWidth
                         start = Offset(x =  circleOffset.x +circleBorderX, y = circleOffset.y),
                         end = Offset(x = (circleOffset.x -(circleRadius+strokeWidth)) +lineWidth// +lineWidth
@@ -95,10 +105,11 @@ fun DrawPageStepIndicator(
                     )
                 }
 
-
-                val bounds = Rect()
-                textPaint.getTextBounds(label, 0, label.length, bounds)
-                val centerX = bounds.centerX()
+//                it.nativeCanvas.drawText(label,
+//                    circleOffset.x - circleRadius,
+//                    circleOffset.y+ (circleRadius + labelTopSpace),
+//                    textPaint
+//                )
 
                 it.nativeCanvas.drawText(label,
                     (circleOffset.x- (centerX)),
