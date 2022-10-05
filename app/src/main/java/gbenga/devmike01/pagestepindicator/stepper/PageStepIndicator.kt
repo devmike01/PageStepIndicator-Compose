@@ -4,126 +4,114 @@ import android.graphics.Rect
 import android.graphics.Typeface
 import android.util.Log
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.*
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
-import androidx.compose.ui.input.pointer.PointerInputScope
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import java.util.concurrent.Flow
-import android.graphics.Color as Color2
+import com.google.accompanist.pager.ExperimentalPagerApi
+import com.google.accompanist.pager.PagerState
+import com.google.accompanist.pager.rememberPagerState
+import gbenga.devmike01.pagestepindicator.stepper.properties.IndicatorLabel
 
+@OptIn(ExperimentalPagerApi::class)
+@OptInV2(ExperimentalPageStepIndicatorApi::class)
 @Composable
-fun PageStepIndicator(labels: List<String> = emptyList(), inActiveColor: Int = Color2.GRAY,
-                      strokeWidth: Float =10F,
-                      textPaintColor: Int =android.graphics.Color.BLACK,
-                      stepPaintColor: Color= Color.Green,
-                      strokePaintColor: Color = Color.Magenta,
-                      canvasModifier: Modifier = Modifier
-                          .height(100.dp)
-                          .fillMaxWidth(),
-                      onChanged: ((position: Int) -> Unit)? = null) {
+fun PageStepIndicator(
+    propertyState: MutableState<IndicatorProperty>,
+    indicatorState: IndicatorState = rememberIndicatorState(),
+    canvasModifier: Modifier = Modifier
+        .height(100.dp)
+        .fillMaxWidth(),
+    pageModifier: Modifier = Modifier.fillMaxSize(),
+    content: (@Composable (
+        indicatorState: MutableState<PageStepIndicatorState>,
+       // pagerState: PagerState
+    ) -> Unit)? = null,
+) {
 
-    val state: MutableState<PageStepIndicatorState> = remember {
-        mutableStateOf(NoEvent)
+    val properties = propertyState.value
+    Column(modifier = pageModifier) {
+
+        PaintStepIndicators(
+              colorProp = propertyState.value.color,
+            applyPaint = { textPaint, stepPaint,
+                           stepBorderPaint,stepCountPaint, color ->
+                DrawPageStepIndicator(
+                    textPaint = textPaint,
+                    stepPaint = stepPaint,
+                    stepBorderPaint = stepBorderPaint,
+                    stepCountPaint = stepCountPaint,
+                    canvasModifier = canvasModifier,
+                    onStepClick = {
+                        indicatorState.value = ChangePageState(
+                            activeColor = android.graphics.Color.CYAN
+                        )
+                    },
+                    indicatorDimen = properties.dimensions,
+                    labels = properties.labels
+                )
+            }
+        )
+
+        if(content != null){
+            content(indicatorState)
+        }
     }
 
-
-    PaintStepIndicators(textPaintColor = textPaintColor,
-        stepPaintColor = stepPaintColor,
-        strokeWidth = strokeWidth,
-        strokePaintColor = strokePaintColor,
-        event = state.value,
-        applyPaint = { textPaint, stepPaint,
-                       stepBorderPaint,stepCountPaint ->
-            DrawPageStepIndicator(
-                textPaint = textPaint,
-                stepPaint = stepPaint,
-                stepBorderPaint = stepBorderPaint,
-                stepCountPaint = stepCountPaint,
-                canvasModifier = canvasModifier,
-                onStepClick = {}
-            )
-        }
-    )
-
 }
-//
-//@Composable
-//private fun PageIndicatorEvent(event : PageStepIndicatorState, pageChanged : () ->){
-//    when(event){
-//        is ChangePageEvent ->{
-//
-//        }
-//        else ->{
-//            // Nothing
-//        }
-//    }
-//}
 
 @Composable
-private fun PaintStepIndicators(strokeWidth: Float =10F,
-                                textPaintColor: Int,
-                                stepPaintColor: Color,
-                                event : PageStepIndicatorState,
+private fun PaintStepIndicators(
+
+    colorProp : IndicatorColor,
                                 applyPaint: @Composable (textPaint: android.graphics.Paint,
                                                          stepPaint: Paint,
                                                          stepBorderPaint: Paint,
-                                                         stepCountPaint: android.graphics.Paint
-                                ) -> Unit,
-                                strokePaintColor: Color){
+                                                         stepCountPaint: android.graphics.Paint,
+                                                         colorProp: IndicatorColor
+                                ) -> Unit){
 
     val textPaint = Paint().asFrameworkPaint().apply {
         isAntiAlias = true
         textSize = 29F
-        color = textPaintColor
         typeface = Typeface.create(Typeface.MONOSPACE, Typeface.BOLD)
     }
 
     val stepCountPaint = Paint().asFrameworkPaint().apply {
         isAntiAlias = true
         textSize = 29F
-        color = textPaintColor
+        color = colorProp.countColor
         typeface = Typeface.create(Typeface.MONOSPACE, Typeface.BOLD)
     }
 
     val stepPaint = Paint().apply {
         isAntiAlias = true
-        this.strokeWidth = strokeWidth
-        color = stepPaintColor
+        color = Color(colorProp.activeColor)
         style = PaintingStyle.Fill
     }
 
     val stepBorderPaint = Paint().apply {
         isAntiAlias = true
         this.strokeWidth = strokeWidth
-        color = strokePaintColor
+        color = Color(colorProp.strokeActiveColor)
         style = PaintingStyle.Stroke
     }
 
     applyPaint(textPaint = textPaint, stepCountPaint = stepCountPaint,
         stepPaint= stepPaint,
-        stepBorderPaint = stepBorderPaint)
+        stepBorderPaint = stepBorderPaint, colorProp = colorProp)
 
-}
-
-private suspend fun PointerInputScope.handleClicks(){
-    detectTapGestures {
-        Log.d("handleClicks", "$it")
-    }
 }
 
 @Composable
 private fun DrawPageStepIndicator(
+    indicatorDimen: StepDimensions,
     textPaint: android.graphics.Paint,
     stepPaint: Paint,
     stepBorderPaint : Paint,
@@ -131,26 +119,22 @@ private fun DrawPageStepIndicator(
     onStepClick: (position: Int) -> Unit,
     stepCoords: ArrayList<Offset> = arrayListOf<Offset>(),
     circleRadius: Float = 50f,
-    stepColor: Color = Color.Red,
-    labels: List<String> = listOf("Rice", "Agbado", "Biscuit", "Water"),
+    labels: List<IndicatorLabel>, //= listOf(IndicatorLabel("Rice"), "Agbado", "Biscuit", "Water"),
     strokeWidth: Float =10F,
     pathHeight : Float = 10F,
     canvasModifier: Modifier){
 
     Canvas(
         modifier = canvasModifier
-            .background(Color.Red)
             .pointerInput(key1 = Unit, block = {
                 detectTapGestures(
                     onTap = {tapOffset ->
-                        val clickAreaRadius = circleRadius.times(2)
-                        val baseCord = stepCoords.first()
-
-                        val xCoords: List<Float> = stepCoords.map { it.x }
+                        onStepClick(calculatePosition(stepCoords,
+                            tapOffset.x, tapOffset.y, circleRadius))
 
                         Log.d("drawIntoCanvas001",
-                            "drawIntoCanvas => ${calculateIndexV3(xCoords,
-                                tapOffset.x, circleRadius)}")
+                            "drawIntoCanvas => ${calculatePosition(stepCoords,
+                                tapOffset.x, tapOffset.y, circleRadius)}")
 
                     }
                 )
@@ -168,14 +152,17 @@ private fun DrawPageStepIndicator(
 
         val lineWidth = stepDistance -  circleRadius
 
-        // Draw component on canvas
+                // Draw component on canvas
         drawIntoCanvas {
             labels.forEachIndexed{ i, label ->
 
                 val pos = "${i +1}"
 
+                // Paint steps and texts
+                textPaint.color = label.color
+
                 val labelBounds = Rect()
-                textPaint.getTextBounds(label, 0, label.length, labelBounds)
+                //textPaint.getTextBounds(label.text, 0, labels.size, labelBounds)
                 val centerX = labelBounds.centerX()
 
                 val posBounds = Rect()
@@ -234,7 +221,7 @@ private fun DrawPageStepIndicator(
                 )
 
                 //Draw label text
-                it.nativeCanvas.drawText(label,
+                it.nativeCanvas.drawText(label.text,
                     (circleOffset.x- (centerX)),
                     circleOffset.y+ (circleRadius + labelTopSpace),
                     textPaint
@@ -247,16 +234,25 @@ private fun DrawPageStepIndicator(
 
 
 @Synchronized
-fun calculateIndexV3(coords: List<Float>, coord: Float,
-                     radius: Float): Int {
-    var firstCord = coords.first()
+fun calculatePosition(coords: List<Offset>, coordX: Float, coordY: Float,
+                      radius: Float): Int {
+
+    val firstCord = coords.first().x
 
     for(element in coords){
-        val coordX = element
-        val startX = coordX -radius
-        val endX = coordX + radius
+        val xPos = element.x
+        val yPos = element.y
 
-        if((coord < endX).and(coord > startX)){
+        val startX = xPos -radius
+        val endX = xPos + radius
+
+        val startY = yPos -radius
+        val endY = yPos + radius
+
+        val yClicked = (coordY < endY).and(coordY > startY)
+        val xClicked = (coordX < endX).and(coordX > startX)
+
+        if((yClicked).and(xClicked)){
             return ((coordX / firstCord)-1).toInt()
         }
     }
@@ -264,8 +260,10 @@ fun calculateIndexV3(coords: List<Float>, coord: Float,
 }
 
 
+@OptIn(ExperimentalPagerApi::class)
+@OptInV2(ExperimentalPageStepIndicatorApi::class)
 @Composable
 @Preview()
 fun PageStepIndicatorPreview(){
-  //  PageStepIndicator()
+   // PageStepIndicator()
 }

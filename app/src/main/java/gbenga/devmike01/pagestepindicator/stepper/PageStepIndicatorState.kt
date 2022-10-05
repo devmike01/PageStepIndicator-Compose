@@ -2,7 +2,10 @@ package gbenga.devmike01.pagestepindicator.stepper
 
 sealed interface PageStepIndicatorState
 
-data class ChangePageEvent(val activeColor: Int): PageStepIndicatorState
+data class ChangePageState(val activeColor: Int,
+                           val position: Int= 0): PageStepIndicatorState
 
 
-object NoEvent: PageStepIndicatorState
+
+
+
