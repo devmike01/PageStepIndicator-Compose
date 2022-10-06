@@ -21,11 +21,3 @@ fun rememberIndicatorState(value: PageStepIndicatorState? =null): IndicatorState
         IndicatorState( value ?: ChangePageState(activeColor = Color.GREEN))
     }
 }
-
-/*
-rememberSaveable(saver = PagerState.Saver) {
-    PagerState(
-        currentPage = initialPage,
-    )
-}
- */

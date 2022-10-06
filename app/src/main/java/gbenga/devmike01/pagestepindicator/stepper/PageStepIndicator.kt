@@ -100,7 +100,7 @@ private fun PaintStepIndicators(
 
     val stepBorderPaint = Paint().apply {
         isAntiAlias = true
-        this.strokeWidth = strokeWidth
+        this.strokeWidth = 10f
         //color = Color(colorProp.)
         style = PaintingStyle.Stroke
     }
@@ -243,40 +243,6 @@ private fun DrawPageStepIndicator(
                     circleOffset.y+ (circleRadius + labelTopSpace),
                     textPaint
                 )
-
-                //Draw label text
-//                if (labelBounds.width() > circleDiameter){
-//                    val textToArray = label.text.split(" ")
-//                    textToArray.forEach { text ->
-//
-//                        val multiLineBound = Rect()
-//                        textPaint.getTextBounds(label.text, 0, label.text.length, labelBounds)
-//                        val centerX = multiLineBound.centerX()
-//
-//                        Log.d("labelBounds", "labelBounds => $text")
-//
-//                        it.nativeCanvas.drawText(text,
-//                            (circleOffset.x- (centerX)),
-//                            circleOffset.y+ (circleRadius + labelTopSpace),
-//                            textPaint
-//                        )
-//                    }
-//                }else{
-//
-//                    /*
-//                          annotatedString: AnnotatedString,
-//        style: TextStyle,
-//        constraints: Constraints,
-//        density: Density,
-//        fontFamilyResolver: FontFamily.Resolver,
-//        placeholders: List<AnnotatedString.Range<Placeholder>> = listOf(),
-//        maxLines: Int = Int.MAX_VALUE,
-//        ellipsis: Boolean = false
-//                     */
-//
-//
-//                }
-                
             }
 
         }

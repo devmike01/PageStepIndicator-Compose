@@ -34,7 +34,7 @@ data class IndicatorColor(
     val inActiveColor: Int = Color.GRAY,
     val strokeActiveColor: Int = Color.CYAN,
     val strokeInActiveColor: Int = Color.GRAY,
-    val pathColor : Int = Color.RED,
+    val pathColor : Int = Color.BLUE,
     val countColor: Int = Color.WHITE ) : Parcelable
 
 @Parcelize
