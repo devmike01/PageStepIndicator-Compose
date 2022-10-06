@@ -16,7 +16,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.PagerState
-import com.google.accompanist.pager.rememberPagerState
 import gbenga.devmike01.pagestepindicator.stepper.properties.IndicatorLabel
 
 @OptIn(ExperimentalPagerApi::class)
@@ -28,33 +27,36 @@ fun PageStepIndicator(
     canvasModifier: Modifier = Modifier
         .height(100.dp)
         .fillMaxWidth(),
+    pagerState: PagerState,
+    stepColor : IndicatorColor = IndicatorColor(),
     pageModifier: Modifier = Modifier.fillMaxSize(),
     content: (@Composable (
         indicatorState: MutableState<PageStepIndicatorState>,
-       // pagerState: PagerState
     ) -> Unit)? = null,
 ) {
 
     val properties = propertyState.value
+
     Column(modifier = pageModifier) {
 
         PaintStepIndicators(
               colorProp = propertyState.value.color,
             applyPaint = { textPaint, stepPaint,
-                           stepBorderPaint,stepCountPaint, color ->
+                           stepBorderPaint,pathPaint, stepCountPaint, color ->
                 DrawPageStepIndicator(
                     textPaint = textPaint,
                     stepPaint = stepPaint,
                     stepBorderPaint = stepBorderPaint,
                     stepCountPaint = stepCountPaint,
+                    pathPaint = pathPaint,
                     canvasModifier = canvasModifier,
                     onStepClick = {
-                        indicatorState.value = ChangePageState(
-                            activeColor = android.graphics.Color.CYAN
-                        )
+
                     },
                     indicatorDimen = properties.dimensions,
-                    labels = properties.labels
+                    labels = properties.labels,
+                    selectedPosition = pagerState.currentPage,
+                    stepColor = stepColor
                 )
             }
         )
@@ -73,8 +75,9 @@ private fun PaintStepIndicators(
                                 applyPaint: @Composable (textPaint: android.graphics.Paint,
                                                          stepPaint: Paint,
                                                          stepBorderPaint: Paint,
+                                                         pathPaint: Paint,
                                                          stepCountPaint: android.graphics.Paint,
-                                                         colorProp: IndicatorColor
+                                                         colorProp: IndicatorColor,
                                 ) -> Unit){
 
     val textPaint = Paint().asFrameworkPaint().apply {
@@ -92,38 +95,47 @@ private fun PaintStepIndicators(
 
     val stepPaint = Paint().apply {
         isAntiAlias = true
-        color = Color(colorProp.activeColor)
         style = PaintingStyle.Fill
     }
 
     val stepBorderPaint = Paint().apply {
         isAntiAlias = true
         this.strokeWidth = strokeWidth
-        color = Color(colorProp.strokeActiveColor)
+        //color = Color(colorProp.)
         style = PaintingStyle.Stroke
     }
 
+    val pathPaint = Paint().apply {
+        isAntiAlias = true
+        this.strokeWidth = strokeWidth
+        color = Color(colorProp.pathColor)
+        style = PaintingStyle.Stroke
+    }//.asFrameworkPaint()
+
     applyPaint(textPaint = textPaint, stepCountPaint = stepCountPaint,
         stepPaint= stepPaint,
-        stepBorderPaint = stepBorderPaint, colorProp = colorProp)
+        stepBorderPaint = stepBorderPaint, pathPaint = pathPaint, colorProp = colorProp)
 
 }
 
 @Composable
 private fun DrawPageStepIndicator(
+    stepColor: IndicatorColor,
     indicatorDimen: StepDimensions,
     textPaint: android.graphics.Paint,
+    pathPaint: Paint,
     stepPaint: Paint,
     stepBorderPaint : Paint,
     stepCountPaint: android.graphics.Paint,
     onStepClick: (position: Int) -> Unit,
     stepCoords: ArrayList<Offset> = arrayListOf<Offset>(),
     circleRadius: Float = 50f,
-    labels: List<IndicatorLabel>, //= listOf(IndicatorLabel("Rice"), "Agbado", "Biscuit", "Water"),
-    strokeWidth: Float =10F,
+    labels: List<IndicatorLabel>,
     pathHeight : Float = 10F,
+    selectedPosition: Int,
     canvasModifier: Modifier){
 
+    val strokeWidth = indicatorDimen.strokeWidth
     Canvas(
         modifier = canvasModifier
             .pointerInput(key1 = Unit, block = {
@@ -138,7 +150,6 @@ private fun DrawPageStepIndicator(
 
                     }
                 )
-                // onStepClick(steps)
             }),
     ){
 
@@ -162,7 +173,7 @@ private fun DrawPageStepIndicator(
                 textPaint.color = label.color
 
                 val labelBounds = Rect()
-                //textPaint.getTextBounds(label.text, 0, labels.size, labelBounds)
+                textPaint.getTextBounds(label.text, 0, label.text.length, labelBounds)
                 val centerX = labelBounds.centerX()
 
                 val posBounds = Rect()
@@ -177,14 +188,23 @@ private fun DrawPageStepIndicator(
                 }), y = (canvasHeight /1.5f))
 
                 if(i ==0 ){
-                    val circleOffsetX = lineWidth
                     circleOffset = circleOffset.copy(x = lineWidth)
                 }
                 val circleBorderX = strokeWidth + circleRadius
 
+                stepCoords.add(circleOffset)
 
                 // Draw filled circle
                // offsetClicked.value = circleOffset
+
+                stepPaint.color = Color(if(i == selectedPosition)
+                    stepColor.activeColor else
+                        stepColor.inActiveColor)
+
+                stepBorderPaint.color = Color(if(i == selectedPosition)
+                    stepColor.strokeActiveColor else
+                    stepColor.strokeInActiveColor)
+
                 it.drawCircle(
                     center = circleOffset,
                     radius = circleRadius - strokeWidth,
@@ -198,16 +218,14 @@ private fun DrawPageStepIndicator(
                     stepBorderPaint
                 )
 
-                stepCoords.add(circleOffset)
-
-                Log.d("circleOffset", "$circleOffset")
-
                 // Draw connector
                 if(i < stepCount){
                     drawLine(
+                        cap = StrokeCap.Round,
                         strokeWidth = pathHeight,
-                        color = stepBorderPaint.color, //pathWidth
-                        start = Offset(x =  circleOffset.x +circleBorderX, y = circleOffset.y),
+                        color = pathPaint.color, //pathWidth
+                        start = Offset(x =  circleOffset.x +circleBorderX,
+                            y = circleOffset.y),
                         end = Offset(x = (circleOffset.x -(circleRadius+strokeWidth)) +lineWidth// +lineWidth
                             , y = circleOffset.y)
                     )
@@ -220,12 +238,45 @@ private fun DrawPageStepIndicator(
                     stepCountPaint
                 )
 
-                //Draw label text
                 it.nativeCanvas.drawText(label.text,
                     (circleOffset.x- (centerX)),
                     circleOffset.y+ (circleRadius + labelTopSpace),
                     textPaint
                 )
+
+                //Draw label text
+//                if (labelBounds.width() > circleDiameter){
+//                    val textToArray = label.text.split(" ")
+//                    textToArray.forEach { text ->
+//
+//                        val multiLineBound = Rect()
+//                        textPaint.getTextBounds(label.text, 0, label.text.length, labelBounds)
+//                        val centerX = multiLineBound.centerX()
+//
+//                        Log.d("labelBounds", "labelBounds => $text")
+//
+//                        it.nativeCanvas.drawText(text,
+//                            (circleOffset.x- (centerX)),
+//                            circleOffset.y+ (circleRadius + labelTopSpace),
+//                            textPaint
+//                        )
+//                    }
+//                }else{
+//
+//                    /*
+//                          annotatedString: AnnotatedString,
+//        style: TextStyle,
+//        constraints: Constraints,
+//        density: Density,
+//        fontFamilyResolver: FontFamily.Resolver,
+//        placeholders: List<AnnotatedString.Range<Placeholder>> = listOf(),
+//        maxLines: Int = Int.MAX_VALUE,
+//        ellipsis: Boolean = false
+//                     */
+//
+//
+//                }
+                
             }
 
         }

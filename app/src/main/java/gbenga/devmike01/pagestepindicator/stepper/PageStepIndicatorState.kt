@@ -7,5 +7,3 @@ data class ChangePageState(val activeColor: Int,
 
 
 
-
-

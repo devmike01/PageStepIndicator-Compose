@@ -13,7 +13,7 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 data class IndicatorProperty( val color: IndicatorColor = IndicatorColor(),
                                   val dimensions: StepDimensions = StepDimensions(),
-                             val labels: List<IndicatorLabel>
+                             val labels: List<IndicatorLabel> = emptyList()
 ) : Parcelable
 
 @Composable
@@ -34,9 +34,10 @@ data class IndicatorColor(
     val inActiveColor: Int = Color.GRAY,
     val strokeActiveColor: Int = Color.CYAN,
     val strokeInActiveColor: Int = Color.GRAY,
+    val pathColor : Int = Color.RED,
     val countColor: Int = Color.WHITE ) : Parcelable
 
 @Parcelize
-data class StepDimensions(   val strokeWidth: Float = 50f,
+data class StepDimensions(   val strokeWidth: Float = 20f,
                              val strokeThickness: Float = 6f,) : Parcelable
 

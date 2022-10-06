@@ -2,6 +2,7 @@ package gbenga.devmike01.pagestepindicator
 
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Canvas
@@ -46,12 +47,13 @@ class MainActivity : ComponentActivity() {
                         Greeting("Android")
                         val indicatorState = rememberIndicatorPropertyState(
                             IndicatorProperty(labels = listOf(IndicatorLabel("Rice"),
-                                IndicatorLabel("Beans"), IndicatorLabel("Soda"), IndicatorLabel("Soda"),
-
-                                IndicatorLabel("Four")))
+                                IndicatorLabel("Beans"), IndicatorLabel("Soda and Wine"),
+                                IndicatorLabel("Soda"),))
                         )
-                        PageStepIndicator(indicatorState){ indicatorState ->
-                            HorizontalPager(count = 5, state = rememberPagerState()) {
+                        val pagerState = rememberPagerState()
+
+                        PageStepIndicator(indicatorState, pagerState = pagerState){ indicatorState ->
+                            HorizontalPager(count = 5, state = pagerState) {
 
                                 Column(modifier = Modifier
                                     .fillMaxWidth()
