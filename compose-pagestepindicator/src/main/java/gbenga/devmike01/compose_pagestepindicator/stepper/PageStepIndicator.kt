@@ -1,4 +1,4 @@
-package gbenga.devmike01.pagestepindicator.stepper
+package gbenga.devmike01.compose_pagestepindicator.stepper
 
 import android.graphics.Rect
 import android.graphics.Typeface
@@ -7,6 +7,7 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.*
@@ -16,53 +17,62 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.PagerState
-import gbenga.devmike01.pagestepindicator.stepper.properties.IndicatorLabel
+import gbenga.devmike01.compose_pagestepindicator.stepper.properties.IndicatorLabel
 
 @OptIn(ExperimentalPagerApi::class)
 @OptInV2(ExperimentalPageStepIndicatorApi::class)
 @Composable
 fun PageStepIndicator(
     propertyState: MutableState<IndicatorProperty>,
+    pagerState: PagerState,
     indicatorState: IndicatorState = rememberIndicatorState(),
     canvasModifier: Modifier = Modifier
         .height(100.dp)
         .fillMaxWidth(),
-    pagerState: PagerState,
     stepColor : IndicatorColor = IndicatorColor(),
     pageModifier: Modifier = Modifier.fillMaxSize(),
     content: (@Composable (
         indicatorState: MutableState<PageStepIndicatorState>,
+        pagerState: PagerState
     ) -> Unit)? = null,
 ) {
 
     val properties = propertyState.value
+
+    val changePageState = rememberSaveable{
+        mutableStateOf(pagerState.currentPage)
+    }
+
+    LaunchedEffect(key1 = changePageState.value, ){
+        pagerState.animateScrollToPage(changePageState.value)
+    }
 
     Column(modifier = pageModifier) {
 
         PaintStepIndicators(
               colorProp = propertyState.value.color,
             applyPaint = { textPaint, stepPaint,
-                           stepBorderPaint,pathPaint, stepCountPaint, color ->
+                           stepBorderPaint, stepCountPaint, color ->
                 DrawPageStepIndicator(
                     textPaint = textPaint,
                     stepPaint = stepPaint,
                     stepBorderPaint = stepBorderPaint,
                     stepCountPaint = stepCountPaint,
-                    pathPaint = pathPaint,
+                  //  pathPaint = pathPaint,
                     canvasModifier = canvasModifier,
                     onStepClick = {
-
+                        changePageState.value = it
                     },
                     indicatorDimen = properties.dimensions,
                     labels = properties.labels,
-                    selectedPosition = pagerState.currentPage,
+                    selectedPosition = changePageState,
                     stepColor = stepColor
                 )
             }
         )
 
         if(content != null){
-            content(indicatorState)
+            content(indicatorState, pagerState)
         }
     }
 
@@ -75,7 +85,6 @@ private fun PaintStepIndicators(
                                 applyPaint: @Composable (textPaint: android.graphics.Paint,
                                                          stepPaint: Paint,
                                                          stepBorderPaint: Paint,
-                                                         pathPaint: Paint,
                                                          stepCountPaint: android.graphics.Paint,
                                                          colorProp: IndicatorColor,
                                 ) -> Unit){
@@ -105,16 +114,7 @@ private fun PaintStepIndicators(
         style = PaintingStyle.Stroke
     }
 
-    val pathPaint = Paint().apply {
-        isAntiAlias = true
-        this.strokeWidth = strokeWidth
-        color = Color(colorProp.pathColor)
-        style = PaintingStyle.Stroke
-    }//.asFrameworkPaint()
-
-    applyPaint(textPaint = textPaint, stepCountPaint = stepCountPaint,
-        stepPaint= stepPaint,
-        stepBorderPaint = stepBorderPaint, pathPaint = pathPaint, colorProp = colorProp)
+    applyPaint(textPaint, stepPaint, stepBorderPaint, stepCountPaint, colorProp)
 
 }
 
@@ -123,7 +123,6 @@ private fun DrawPageStepIndicator(
     stepColor: IndicatorColor,
     indicatorDimen: StepDimensions,
     textPaint: android.graphics.Paint,
-    pathPaint: Paint,
     stepPaint: Paint,
     stepBorderPaint : Paint,
     stepCountPaint: android.graphics.Paint,
@@ -132,7 +131,7 @@ private fun DrawPageStepIndicator(
     circleRadius: Float = 50f,
     labels: List<IndicatorLabel>,
     pathHeight : Float = 10F,
-    selectedPosition: Int,
+    selectedPosition: MutableState<Int>,
     canvasModifier: Modifier){
 
     val strokeWidth = indicatorDimen.strokeWidth
@@ -159,7 +158,7 @@ private fun DrawPageStepIndicator(
         val stepDistance = (canvasWidth / labels.size)//1.5f
         val canvasHeight = (circleRadius.times(2))
             .plus(strokeWidth).plus(labelTopSpace)
-        val stepCount = labels.size-1;
+        val stepCount = labels.size-1
 
         val lineWidth = stepDistance -  circleRadius
 
@@ -190,24 +189,26 @@ private fun DrawPageStepIndicator(
                 if(i ==0 ){
                     circleOffset = circleOffset.copy(x = lineWidth)
                 }
+
                 val circleBorderX = strokeWidth + circleRadius
 
                 stepCoords.add(circleOffset)
 
-                // Draw filled circle
-               // offsetClicked.value = circleOffset
-
-                stepPaint.color = Color(if(i == selectedPosition)
+                stepPaint.color = Color(if(i == selectedPosition.value)
                     stepColor.activeColor else
                         stepColor.inActiveColor)
 
-                stepBorderPaint.color = Color(if(i == selectedPosition)
+                stepBorderPaint.color = Color(if(i <= selectedPosition.value)
                     stepColor.strokeActiveColor else
                     stepColor.strokeInActiveColor)
 
+                stepPaint.color = Color(if(i <= selectedPosition.value)
+                    stepColor.activeColor else
+                    stepColor.inActiveColor)
+
                 it.drawCircle(
                     center = circleOffset,
-                    radius = circleRadius - strokeWidth,
+                    radius = circleRadius - (strokeWidth/2f),
                     stepPaint
                 )
 
@@ -223,7 +224,11 @@ private fun DrawPageStepIndicator(
                     drawLine(
                         cap = StrokeCap.Round,
                         strokeWidth = pathHeight,
-                        color = pathPaint.color, //pathWidth
+                        color = if(i < selectedPosition.value){
+                            Color.Cyan
+                        }else{
+                            Color.Black
+                        },
                         start = Offset(x =  circleOffset.x +circleBorderX,
                             y = circleOffset.y),
                         end = Offset(x = (circleOffset.x -(circleRadius+strokeWidth)) +lineWidth// +lineWidth

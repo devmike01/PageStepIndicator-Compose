@@ -1,4 +1,4 @@
-package gbenga.devmike01.pagestepindicator.stepper
+package gbenga.devmike01.compose_pagestepindicator.stepper
 
 import kotlin.reflect.KClass
 
@@ -13,7 +13,7 @@ annotation class ExperimentalPageStepIndicatorApi
 @Target(AnnotationTarget.ANNOTATION_CLASS)
 @Retention(AnnotationRetention.BINARY)
 @SinceKotlin("1.3")
-public annotation class RequiresOptInV2(
+annotation class RequiresOptInV2(
     val message: String = "",
     val level: Level = Level.ERROR
 ) {
@@ -21,7 +21,7 @@ public annotation class RequiresOptInV2(
      * Severity of the diagnostic that should be reported on usages which did not explicitly opted into
      * the API either by using [OptIn] or by being annotated with the corresponding marker annotation.
      */
-    public enum class Level {
+    enum class Level {
         /** Specifies that a warning should be reported on incorrect usages of this API. */
         WARNING,
 
@@ -46,6 +46,6 @@ public annotation class RequiresOptInV2(
 )
 @Retention(AnnotationRetention.SOURCE)
 @SinceKotlin("1.3")
-public annotation class OptInV2(
+annotation class OptInV2(
     vararg val markerClass: KClass<out Annotation>
 )

@@ -1,8 +1,7 @@
-package gbenga.devmike01.pagestepindicator.stepper
+package gbenga.devmike01.compose_pagestepindicator.stepper
 
 import android.graphics.Color
 import androidx.compose.runtime.*
-import androidx.compose.runtime.saveable.rememberSaveable
 
 class IndicatorState(override var value: PageStepIndicatorState) : MutableState<PageStepIndicatorState> {
     override fun component1(): PageStepIndicatorState {

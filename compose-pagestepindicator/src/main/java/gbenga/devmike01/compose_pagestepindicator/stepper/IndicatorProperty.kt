@@ -1,13 +1,12 @@
-package gbenga.devmike01.pagestepindicator.stepper;
+package gbenga.devmike01.compose_pagestepindicator.stepper
 
 import android.graphics.Color
-import android.os.Parcel
 import android.os.Parcelable
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
-import gbenga.devmike01.pagestepindicator.stepper.properties.IndicatorLabel
+import gbenga.devmike01.compose_pagestepindicator.stepper.properties.IndicatorLabel
 import kotlinx.parcelize.Parcelize
 
 @Parcelize

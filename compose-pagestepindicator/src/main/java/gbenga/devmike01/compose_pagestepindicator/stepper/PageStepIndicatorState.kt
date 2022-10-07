@@ -1,4 +1,4 @@
-package gbenga.devmike01.pagestepindicator.stepper
+package gbenga.devmike01.compose_pagestepindicator.stepper
 
 sealed interface PageStepIndicatorState
 

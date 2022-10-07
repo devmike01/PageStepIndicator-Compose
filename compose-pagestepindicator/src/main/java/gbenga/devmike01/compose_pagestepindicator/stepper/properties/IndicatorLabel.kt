@@ -1,7 +1,6 @@
-package gbenga.devmike01.pagestepindicator.stepper.properties
+package gbenga.devmike01.compose_pagestepindicator.stepper.properties
 
 import android.os.Parcelable
-import androidx.compose.ui.graphics.Color
 import kotlinx.parcelize.Parcelize
 
 
