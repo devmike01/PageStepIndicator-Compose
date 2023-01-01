@@ -8,6 +8,8 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -44,9 +46,16 @@ class MainActivity : ComponentActivity() {
                                 IndicatorLabel("Soda"),))
                         )
 
-                        PageStepIndicator(propertyState =indicatorState,
+                        val pageState = rememberPagerState()
+
+                        val changePageState = rememberSaveable{
+                            mutableStateOf(pageState.currentPage)
+                        }
+
+                        PageStepIndicator(
+                            propertyState =indicatorState,
                             indicatorState = rememberIndicatorState(),
-                            pagerState = rememberPagerState()){ indicatorState, pagerState ->
+                            pagerState = pageState){ indicatorState, pagerState ->
                             HorizontalPager(count = 4, state = pagerState) {
                                 Column(modifier = Modifier
                                     .align(alignment = Alignment.CenterHorizontally)
