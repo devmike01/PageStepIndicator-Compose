@@ -19,11 +19,14 @@ import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.PagerState
 import gbenga.devmike01.compose_pagestepindicator.stepper.properties.IndicatorLabel
 import kotlinx.coroutines.launch
+import java.math.RoundingMode
+import kotlin.math.nextUp
+import kotlin.math.roundToInt
 
 @OptIn(ExperimentalPagerApi::class)
 @Composable
 fun PageStepIndicator(
-    pageModifier: Modifier = Modifier.fillMaxSize(),
+    modifier: Modifier = Modifier,
    // onPressChangedPos: (newPos: Int) -> Unit,
     propertyState: MutableState<IndicatorProperty>,
     pagerState: PagerState,
@@ -39,9 +42,7 @@ fun PageStepIndicator(
 
     val properties = propertyState.value
 
-    Log.d("isScrollInProgress", "${pagerState.currentPage}")
-
-    Column(modifier = pageModifier) {
+    Column(modifier = modifier) {
 
         PaintStepIndicators(
               colorProp = propertyState.value.color,
@@ -144,9 +145,6 @@ private fun DrawPageStepIndicator(
                                 }
                         }
 
-                        Log.d("drawIntoCanvas001",
-                            "drawIntoCanvas => ${calculatePosition(stepCoords,
-                                tapOffset.x, tapOffset.y, circleRadius)}")
 
                     }
                 )
@@ -181,7 +179,7 @@ private fun DrawPageStepIndicator(
                 val posCenterY = posBounds.centerY()
 
                 var circleOffset =  Offset(x = (lineWidth) +(if(i == 0){
-                    i.toFloat()
+                    0f
                 }else{
                     (lineWidth* i)
                 }), y = (canvasHeight /1.5f))
@@ -275,11 +273,13 @@ fun calculatePosition(coords: List<Offset>, coordX: Float, coordY: Float,
         val xClicked = (coordX < endX).and(coordX > startX)
 
         if((yClicked).and(xClicked)){
-            return ((coordX / firstCord)-1).toInt()
+            val position = ((coordX / firstCord)-1).nextUp();
+             return position.roundToInt()
         }
     }
     return -1
 }
+
 
 
 @OptIn(ExperimentalPagerApi::class)
