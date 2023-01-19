@@ -1,8 +1,10 @@
 package gbenga.devmike01.pagestepindicator
 
 import android.os.Bundle
+import android.widget.Space
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
@@ -12,6 +14,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.google.accompanist.pager.ExperimentalPagerApi
@@ -43,27 +46,25 @@ class MainActivity : ComponentActivity() {
                         val indicatorState = rememberIndicatorPropertyState(
                             IndicatorProperty(labels = listOf(IndicatorLabel("Rice"),
                                 IndicatorLabel("Beans"), IndicatorLabel("Soda and Wine"),
-                                IndicatorLabel("Soda"),))
+                                IndicatorLabel("Soda"), IndicatorLabel("Beans and Rice")))
                         )
 
                         val pageState = rememberPagerState()
 
-                        val changePageState = rememberSaveable{
-                            mutableStateOf(pageState.currentPage)
-                        }
-
                         PageStepIndicator(
+//                            modifier = Modifier
+//                                .background(Color.Black)
+//                                .height(10.dp),
                             propertyState =indicatorState,
                             indicatorState = rememberIndicatorState(),
                             pagerState = pageState){ indicatorState, pagerState ->
-                            HorizontalPager(count = 4, state = pagerState) {
+                            HorizontalPager(count = 5, state = pagerState) {
                                 Column(modifier = Modifier
-                                    .align(alignment = Alignment.CenterHorizontally)
                                     .fillMaxWidth()
                                     .fillMaxHeight(fraction = 0.7f)) {
                                     Text(text = "PAGE ${pagerState.currentPage}", modifier = Modifier.padding(20.dp))
                                 }
-                                
+
                             }
                         }
                         

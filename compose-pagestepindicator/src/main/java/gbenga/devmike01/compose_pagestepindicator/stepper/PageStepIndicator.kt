@@ -2,12 +2,10 @@ package gbenga.devmike01.compose_pagestepindicator.stepper
 
 import android.graphics.Rect
 import android.graphics.Typeface
-import android.util.Log
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.*
@@ -19,7 +17,6 @@ import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.PagerState
 import gbenga.devmike01.compose_pagestepindicator.stepper.properties.IndicatorLabel
 import kotlinx.coroutines.launch
-import java.math.RoundingMode
 import kotlin.math.nextUp
 import kotlin.math.roundToInt
 
@@ -27,7 +24,6 @@ import kotlin.math.roundToInt
 @Composable
 fun PageStepIndicator(
     modifier: Modifier = Modifier,
-   // onPressChangedPos: (newPos: Int) -> Unit,
     propertyState: MutableState<IndicatorProperty>,
     pagerState: PagerState,
     indicatorState: IndicatorState = rememberIndicatorState(),
@@ -38,16 +34,18 @@ fun PageStepIndicator(
     ) -> Unit)? = null,
 ) {
 
+
     val coroutineScope = rememberCoroutineScope();
 
     val properties = propertyState.value
 
-    Column(modifier = modifier) {
+    Column(modifier = Modifier,) {
 
         PaintStepIndicators(
               colorProp = propertyState.value.color,
             applyPaint = { textPaint, stepPaint,
-                           stepBorderPaint, stepCountPaint, color ->
+                           stepBorderPaint, stepCountPaint,
+                           color ->
                 DrawPageStepIndicator(
                     textPaint = textPaint,
                     stepPaint = stepPaint,
@@ -112,7 +110,8 @@ private fun PaintStepIndicators(
         style = PaintingStyle.Stroke
     }
 
-    applyPaint(textPaint, stepPaint, stepBorderPaint, stepCountPaint, colorProp)
+    applyPaint(textPaint, stepPaint, stepBorderPaint,
+        stepCountPaint, colorProp)
 
 }
 
@@ -163,7 +162,7 @@ private fun DrawPageStepIndicator(
                 // Draw component on canvas
         drawIntoCanvas {
             labels.forEachIndexed{ i, label ->
-                
+
                 val pos = "${i +1}"
 
                 // Paint steps and texts
@@ -253,7 +252,7 @@ private fun DrawPageStepIndicator(
 }
 
 
-@Synchronized
+//@Synchronized
 fun calculatePosition(coords: List<Offset>, coordX: Float, coordY: Float,
                       radius: Float): Int {
 
@@ -273,7 +272,8 @@ fun calculatePosition(coords: List<Offset>, coordX: Float, coordY: Float,
         val xClicked = (coordX < endX).and(coordX > startX)
 
         if((yClicked).and(xClicked)){
-            val position = ((coordX / firstCord)-1).nextUp();
+            val position = ((coordX / firstCord)-1)
+                .nextUp();
              return position.roundToInt()
         }
     }
