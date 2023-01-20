@@ -20,11 +20,8 @@ import androidx.compose.ui.unit.dp
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.rememberPagerState
-import gbenga.devmike01.compose_pagestepindicator.stepper.IndicatorProperty
-import gbenga.devmike01.compose_pagestepindicator.stepper.PageStepIndicator
+import gbenga.devmike01.compose_pagestepindicator.stepper.*
 import gbenga.devmike01.compose_pagestepindicator.stepper.properties.IndicatorLabel
-import gbenga.devmike01.compose_pagestepindicator.stepper.rememberIndicatorPropertyState
-import gbenga.devmike01.compose_pagestepindicator.stepper.rememberIndicatorState
 import gbenga.devmike01.pagestepindicator.ui.theme.PageStepIndicatorTheme
 
 class MainActivity : ComponentActivity() {
@@ -42,7 +39,6 @@ class MainActivity : ComponentActivity() {
                     Column(modifier = Modifier.fillMaxWidth(),
                         horizontalAlignment = Alignment.CenterHorizontally) {
 
-                        Greeting("Android")
                         val indicatorState = rememberIndicatorPropertyState(
                             IndicatorProperty(labels = listOf(IndicatorLabel("Rice"),
                                 IndicatorLabel("Beans"), IndicatorLabel("Soda and Wine"),
@@ -52,9 +48,10 @@ class MainActivity : ComponentActivity() {
                         val pageState = rememberPagerState()
 
                         PageStepIndicator(
-//                            modifier = Modifier
-//                                .background(Color.Black)
-//                                .height(10.dp),
+                            stepColor= IndicatorColor(
+                                activeColor = android.graphics.Color.GREEN,
+                                inActiveColor = R.color.purple_700
+                            ),
                             propertyState =indicatorState,
                             indicatorState = rememberIndicatorState(),
                             pagerState = pageState){ indicatorState, pagerState ->
@@ -62,7 +59,8 @@ class MainActivity : ComponentActivity() {
                                 Column(modifier = Modifier
                                     .fillMaxWidth()
                                     .fillMaxHeight(fraction = 0.7f)) {
-                                    Text(text = "PAGE ${pagerState.currentPage}", modifier = Modifier.padding(20.dp))
+                                    Box(modifier = Modifier.fillMaxSize()
+                                        .background(Color.Blue.copy(red = (pagerState.currentPage*0.2).toFloat())))
                                 }
 
                             }

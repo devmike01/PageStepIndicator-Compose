@@ -51,7 +51,6 @@ fun PageStepIndicator(
                     stepPaint = stepPaint,
                     stepBorderPaint = stepBorderPaint,
                     stepCountPaint = stepCountPaint,
-                  //  pathPaint = pathPaint,
                     canvasModifier = Modifier
                         .height(100.dp)
                         .fillMaxWidth(),
@@ -252,7 +251,6 @@ private fun DrawPageStepIndicator(
 }
 
 
-//@Synchronized
 fun calculatePosition(coords: List<Offset>, coordX: Float, coordY: Float,
                       radius: Float): Int {
 

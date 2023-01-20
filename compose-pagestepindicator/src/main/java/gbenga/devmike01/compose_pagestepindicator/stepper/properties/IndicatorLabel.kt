@@ -5,4 +5,5 @@ import kotlinx.parcelize.Parcelize
 
 
 @Parcelize
-data class IndicatorLabel(val text: String, val color: Int = android.graphics.Color.DKGRAY) : Parcelable
+data class IndicatorLabel(val text: String,
+                          val color: Int = android.graphics.Color.DKGRAY) : Parcelable
