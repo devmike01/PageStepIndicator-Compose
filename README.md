@@ -21,9 +21,16 @@ allprojects {
 
 ```groovy
 dependencies {
-    implementation 'com.github.devmike01:PageStepIndicator-Compose:{LATEST VERSION}'
+    implementation 'com.github.devmike01:PageStepIndicator-Compose:alpha01'
 }
 ```
+
+```Kotlin DSL(Android Only)
+dependencies {
+    implementation("com.github.devmike01:PageStepIndicator-Compose:alpha01")
+}
+```
+
 That's all you need to use the library.
 
 ### Available APIs
