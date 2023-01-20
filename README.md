@@ -3,7 +3,7 @@ A page step indicator for Android jetpack compose. If your project doesn't yet s
 checkout the [other page stepper](https://github.com/devmike01/PageStepIndicator) for `XML` layouts.
 
 ### Preview
-![PageStepper Image Screenshot](https://github.com/devmike01/PageStepIndicator-Compose/blob/choir/media/pageindicator_anim.gif)
+!<img src="https://github.com/devmike01/PageStepIndicator-Compose/blob/choir/media/pageindicator_anim.gif" width="240" height="400">
 
 ### How To Use
 - Add it to your root build.gradle at the end of repositories:

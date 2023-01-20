@@ -35,40 +35,34 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colors.background
                 ) {
+                    val indicatorState = rememberIndicatorPropertyState(
+                        IndicatorProperty(labels = listOf(IndicatorLabel("Rice"),
+                            IndicatorLabel("Beans"), IndicatorLabel("Soda and Wine"),
+                            IndicatorLabel("Soda"), IndicatorLabel("Beans and Rice")))
+                    )
 
-                    Column(modifier = Modifier.fillMaxWidth(),
-                        horizontalAlignment = Alignment.CenterHorizontally) {
+                    val pageState = rememberPagerState()
 
-                        val indicatorState = rememberIndicatorPropertyState(
-                            IndicatorProperty(labels = listOf(IndicatorLabel("Rice"),
-                                IndicatorLabel("Beans"), IndicatorLabel("Soda and Wine"),
-                                IndicatorLabel("Soda"), IndicatorLabel("Beans and Rice")))
-                        )
-
-                        val pageState = rememberPagerState()
-
-                        PageStepIndicator(
-                            stepColor= IndicatorColor(
-                                strokeActiveColor = android.graphics.Color.YELLOW,
-                                activeColor = android.graphics.Color.GREEN,
-                                inActiveColor = android.graphics.Color.YELLOW
-                            ),
-                            propertyState =indicatorState,
-                            indicatorState = rememberIndicatorState(),
-                            pagerState = pageState){ indicatorState, pagerState ->
-                            HorizontalPager(count = 5, state = pagerState) {
-                                Column(modifier = Modifier
-                                    .fillMaxWidth()
-                                    .fillMaxHeight(),
+                    PageStepIndicator(
+                        stepColor= IndicatorColor(
+                            strokeActiveColor = android.graphics.Color.YELLOW,
+                            activeColor = android.graphics.Color.GREEN,
+                            inActiveColor = android.graphics.Color.YELLOW
+                        ),
+                        propertyState =indicatorState,
+                        indicatorState = rememberIndicatorState(),
+                        pagerState = pageState){ indicatorState, pagerState ->
+                        HorizontalPager(count = 5, state = pagerState) {
+                            Column(modifier = Modifier
+                                .fillMaxWidth()
+                                .fillMaxHeight(),
                                 horizontalAlignment = Alignment.CenterHorizontally) {
-                                    Box(modifier = Modifier.fillMaxWidth(fraction = 0.9f)
-                                        .fillMaxHeight()
-                                        .background(Color.Blue.copy(red = (pagerState.currentPage*0.2).toFloat())))
-                                }
-
+                                Box(modifier = Modifier.fillMaxWidth(fraction = 0.9f)
+                                    .fillMaxHeight()
+                                    .background(Color.Blue.copy(red = (pagerState.currentPage*0.2).toFloat())))
                             }
+
                         }
-                        
                     }
                 }
             }
