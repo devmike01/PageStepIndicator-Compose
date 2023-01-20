@@ -33,6 +33,7 @@ data class IndicatorColor(
     val inActiveColor: Int = Color.GRAY,
     val strokeActiveColor: Int = Color.CYAN,
     val strokeInActiveColor: Int = Color.GRAY,
+    @Deprecated("Thinking of removing this one")
     val pathColor : Int = Color.BLUE,
     val countColor: Int = Color.WHITE ) : Parcelable
 

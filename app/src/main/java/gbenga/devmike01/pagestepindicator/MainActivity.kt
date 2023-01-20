@@ -49,8 +49,9 @@ class MainActivity : ComponentActivity() {
 
                         PageStepIndicator(
                             stepColor= IndicatorColor(
+                                strokeActiveColor = android.graphics.Color.YELLOW,
                                 activeColor = android.graphics.Color.GREEN,
-                                inActiveColor = R.color.purple_700
+                                inActiveColor = android.graphics.Color.YELLOW
                             ),
                             propertyState =indicatorState,
                             indicatorState = rememberIndicatorState(),
@@ -58,8 +59,10 @@ class MainActivity : ComponentActivity() {
                             HorizontalPager(count = 5, state = pagerState) {
                                 Column(modifier = Modifier
                                     .fillMaxWidth()
-                                    .fillMaxHeight(fraction = 0.7f)) {
-                                    Box(modifier = Modifier.fillMaxSize()
+                                    .fillMaxHeight(),
+                                horizontalAlignment = Alignment.CenterHorizontally) {
+                                    Box(modifier = Modifier.fillMaxWidth(fraction = 0.9f)
+                                        .fillMaxHeight()
                                         .background(Color.Blue.copy(red = (pagerState.currentPage*0.2).toFloat())))
                                 }
 
