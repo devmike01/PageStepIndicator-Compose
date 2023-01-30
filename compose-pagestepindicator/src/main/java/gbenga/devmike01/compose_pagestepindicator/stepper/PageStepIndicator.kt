@@ -23,7 +23,6 @@ import kotlin.math.roundToInt
 @OptIn(ExperimentalPagerApi::class)
 @Composable
 fun PageStepIndicator(
-    modifier: Modifier = Modifier,
     propertyState: MutableState<IndicatorProperty>,
     pagerState: PagerState,
     indicatorState: IndicatorState = rememberIndicatorState(),
@@ -152,7 +151,7 @@ private fun DrawPageStepIndicator(
         val labelTopSpace = 50f
 
         val canvasWidth = size.width
-        val stepDistance = (canvasWidth / labels.size)//1.5f
+        var stepDistance = (canvasWidth / labels.size)//1.5f
         val canvasHeight = (circleRadius.times(2))
             .plus(strokeWidth).plus(labelTopSpace)
         val stepCount = labels.size-1
@@ -176,15 +175,11 @@ private fun DrawPageStepIndicator(
                 val posCenterX = posBounds.centerX()
                 val posCenterY = posBounds.centerY()
 
-                var circleOffset =  Offset(x = (lineWidth) +(if(i == 0){
-                    0f
+                val circleOffset =  Offset(x = (lineWidth) +(if(i == 0){
+                    0F
                 }else{
                     (lineWidth* i)
-                }), y = (canvasHeight /1.5f))
-
-                if(i ==0 ){
-                    circleOffset = circleOffset.copy(x = lineWidth)
-                }
+                }), y = (canvasHeight /1.5f)) //16
 
                 val circleBorderX = strokeWidth + circleRadius
 

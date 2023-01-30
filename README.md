@@ -17,15 +17,16 @@ allprojects {
 		}
 	}
 ```
-- Add the dependency
+- ##### Add the dependency
 
+##### Groovy
 ```groovy
 dependencies {
     implementation 'com.github.devmike01:PageStepIndicator-Compose:alpha01'
 }
 ```
-
-```Kotlin DSL(Android Only)
+##### Kotlin DSL(Android Only)
+```kotlin
 dependencies {
     implementation("com.github.devmike01:PageStepIndicator-Compose:alpha01")
 }
