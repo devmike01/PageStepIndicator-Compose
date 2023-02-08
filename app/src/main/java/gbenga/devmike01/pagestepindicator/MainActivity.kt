@@ -38,7 +38,8 @@ class MainActivity : ComponentActivity() {
                     val indicatorState = rememberIndicatorPropertyState(
                         IndicatorProperty(labels = listOf(IndicatorLabel("Rice"),
                             IndicatorLabel("Beans"), IndicatorLabel("Soda and Wine"),
-                            IndicatorLabel("Soda"), IndicatorLabel("Beans and Rice")))
+                            IndicatorLabel("Soda"), IndicatorLabel("Beans and Rice"),
+                            IndicatorLabel("Last Step")))
                     )
 
                     val pageState = rememberPagerState()
