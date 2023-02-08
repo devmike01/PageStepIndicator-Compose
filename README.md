@@ -28,7 +28,7 @@ dependencies {
 ##### Kotlin DSL(Android Only)
 ```kotlin
 dependencies {
-    implementation("com.github.devmike01:PageStepIndicator-Compose:alpha01")
+    implementation("com.github.devmike01:PageStepIndicator-Compose:1.0.1-alpha")
 }
 ```
 
