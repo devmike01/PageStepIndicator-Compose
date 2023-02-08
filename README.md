@@ -35,7 +35,7 @@ dependencies {
 That's all you need to use the library.
 
 ### Available APIs
-I'm sleepy already. To be continued...
+Compiling...
 
 ### Sample
 
