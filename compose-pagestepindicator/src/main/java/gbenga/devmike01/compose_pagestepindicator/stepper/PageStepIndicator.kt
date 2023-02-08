@@ -1,14 +1,9 @@
 package gbenga.devmike01.compose_pagestepindicator.stepper
 
-import android.content.res.Configuration
 import android.graphics.Rect
 import android.graphics.Typeface
-import android.util.Log
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
-import androidx.compose.foundation.indication
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -16,15 +11,11 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.*
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.PagerState
 import gbenga.devmike01.compose_pagestepindicator.stepper.properties.IndicatorLabel
 import kotlinx.coroutines.launch
-import java.util.concurrent.Flow
 import kotlin.math.nextUp
 import kotlin.math.roundToInt
 
@@ -42,7 +33,7 @@ fun PageStepIndicator(
 ) {
 
 
-    val coroutineScope = rememberCoroutineScope();
+    val coroutineScope = rememberCoroutineScope()
 
     val properties = propertyState.value
 
@@ -64,7 +55,7 @@ fun PageStepIndicator(
                         .fillMaxWidth(),
                     onStepClick = {
                                   coroutineScope.launch {
-                                      pagerState.animateScrollToPage(it);
+                                      pagerState.animateScrollToPage(it)
                                   }
                     },
                     indicatorDimen = properties.dimensions,
@@ -171,7 +162,7 @@ private fun DrawPageStepIndicator(
                 // Draw component on canvas
         var drawingsWidth = ((strokeWidth)
             .plus(circleRadius *2)
-            .plus(lineWidth)).times(stepCount-1);
+            .plus(lineWidth)).times(stepCount-1)
 
         val firstStepX = drawingsWidth.minus(canvasWidth)
 
@@ -285,8 +276,8 @@ fun calculatePosition(coords: List<Offset>, coordX: Float, coordY: Float,
 
         if((yClicked).and(xClicked)){
             val position = ((coordX / firstCord)-1)
-                .nextUp();
-             return position.roundToInt()
+                .nextUp()
+            return position.roundToInt()
         }
     }
     return -1
