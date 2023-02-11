@@ -11,6 +11,10 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.*
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.semantics.SemanticsPropertyKey
+import androidx.compose.ui.semantics.collectionInfo
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.PagerState
@@ -37,7 +41,10 @@ fun PageStepIndicator(
 
     val properties = propertyState.value
 
-    Column(modifier = Modifier,) {
+    Column(modifier = Modifier.semantics {
+        this.contentDescription ="PageStepIndicator"
+    }
+        ,) {
 
         PaintStepIndicators(
               colorProp = propertyState.value.color,
@@ -129,11 +136,9 @@ private fun DrawPageStepIndicator(
     selectedPosition: Int,
     modifier: Modifier
 ){
-
     val strokeWidth = indicatorDimen.strokeWidth
     Canvas(
-        modifier = modifier
-            .pointerInput(key1 = Unit, block = {
+        modifier = modifier.pointerInput(key1 = Unit, block = {
                 detectTapGestures(
                     onTap = {tapOffset ->
                         calculatePosition(stepCoords,
@@ -160,7 +165,7 @@ private fun DrawPageStepIndicator(
 
         val lineWidth = stepDistance -  circleRadius
                 // Draw component on canvas
-        var drawingsWidth = ((strokeWidth)
+        val drawingsWidth = ((strokeWidth)
             .plus(circleRadius *2)
             .plus(lineWidth)).times(stepCount-1)
 

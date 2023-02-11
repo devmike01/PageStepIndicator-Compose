@@ -17,6 +17,6 @@ class IndicatorState(override var value: PageStepIndicatorState) : MutableState<
 fun rememberIndicatorState(value: PageStepIndicatorState? =null): IndicatorState{
 
     return remember{
-        IndicatorState( value ?: ChangePageState(activeColor = Color.GREEN))
+        IndicatorState( value ?: ChangePageState())
     }
 }
