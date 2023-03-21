@@ -35,11 +35,10 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colors.background
                 ) {
+                    val items = listOf(IndicatorLabel("Rice"),
+                        IndicatorLabel("Beans"), IndicatorLabel("Beans and Rice"))
                     val indicatorState = rememberIndicatorPropertyState(
-                        IndicatorProperty(labels = listOf(IndicatorLabel("Rice"),
-                            IndicatorLabel("Beans"), IndicatorLabel("Soda and Wine"),
-                            IndicatorLabel("Soda"), IndicatorLabel("Beans and Rice"),
-                            IndicatorLabel("Last Step")))
+                        IndicatorProperty(labels = items)
                     )
 
                     val pageState = rememberPagerState()
@@ -53,7 +52,7 @@ class MainActivity : ComponentActivity() {
                         propertyState =indicatorState,
                         indicatorState = rememberIndicatorState(),
                         pagerState = pageState){ indicatorState, pagerState ->
-                        HorizontalPager(count = 5, state = pagerState) {
+                        HorizontalPager(count = items.size, state = pagerState) {
                             Column(modifier = Modifier
                                 .fillMaxWidth()
                                 .fillMaxHeight(),
