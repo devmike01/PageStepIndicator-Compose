@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.widget.Space
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.MaterialTheme
@@ -44,6 +45,7 @@ class MainActivity : ComponentActivity() {
                     val pageState = rememberPagerState()
 
                     PageStepIndicator(
+                        animationSpec = tween(durationMillis = 1000),
                         stepColor= IndicatorColor(
                             strokeActiveColor = android.graphics.Color.YELLOW,
                             activeColor = android.graphics.Color.GREEN,
